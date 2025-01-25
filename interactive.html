@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Form Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .form-builder-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .form-builder {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .components, .preview {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .components h3, .preview h3 {
+            text-align: center;
+        }
+
+        .component {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 8px;
+            cursor: grab;
+            border-radius: 5px;
+        }
+
+        .form-preview {
+            border: 1px dashed #ddd;
+            min-height: 200px;
+            padding: 10px;
+        }
+
+        .form-preview .form-item {
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-builder-container">
+        <h1>Interactive Form Builder</h1>
+
+        <div class="form-builder">
+            <div class="components">
+                <h3>Components</h3>
+                <div class="component" draggable="true" data-type="text">Text Input</div>
+                <div class="component" draggable="true" data-type="select">Select Dropdown</div>
+                <div class="component" draggable="true" data-type="radio">Radio Button</div>
+            </div>
+
+            <div class="preview">
+                <h3>Form Preview</h3>
+                <div class="form-preview" id="formPreview">
+                    <!-- Form items will be added here -->
+                </div>
+                <button id="generateJson">Generate JSON Schema</button>
+            </div>
+        </div>
+
+        <textarea id="formSchema" rows="10" cols="50" readonly style="margin-top: 20px; width: 600px;"></textarea>
+    </div>
+
+    <script>
+        const formPreview = document.getElementById('formPreview');
+        const generateJsonBtn = document.getElementById('generateJson');
+        const formSchemaTextarea = document.getElementById('formSchema');
+
+        let formItems = [];
+
+        document.querySelectorAll('.component').forEach(component => {
+            component.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('type', e.target.dataset.type);
+            });
+        });
+
+        formPreview.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        formPreview.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const type = e.dataTransfer.getData('type');
+            addFormItem(type);
+        });
+
+        const addFormItem = (type) => {
+            let newItem = {};
+
+            if (type === 'text') {
+                newItem = {
+                    type: 'text',
+                    label: 'Text Input',
+                    placeholder: 'Enter text...'
+                };
+                createFormElement(newItem);
+            } else if (type === 'select') {
+                newItem = {
+                    type: 'select',
+                    label: 'Select Dropdown',
+                    options: ['Option 1', 'Option 2', 'Option 3']
+                };
+                createFormElement(newItem);
+            } else if (type === 'radio') {
+                newItem = {
+                    type: 'radio',
+                    label: 'Radio Button',
+                    options: ['Option A', 'Option B']
+                };
+                createFormElement(newItem);
+            }
+
+            formItems.push(newItem);
+        };
+
+        const createFormElement = (item) => {
+            const formItemDiv = document.createElement('div');
+            formItemDiv.className = 'form-item';
+
+            const label = document.createElement('label');
+            label.textContent = item.label;
+            formItemDiv.appendChild(label);
+
+            if (item.type === 'text') {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = item.placeholder;
+                formItemDiv.appendChild(input);
+            } else if (item.type === 'select') {
+                const select = document.createElement('select');
+                item.options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option;
+                    opt.textContent = option;
+                    select.appendChild(opt);
+                });
+                formItemDiv.appendChild(select);
+            } else if (item.type === 'radio') {
+                item.options.forEach(option => {
+                    const radioDiv = document.createElement('div');
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = item.label;
+                    radio.value = option;
+
+                    const radioLabel = document.createElement('label');
+                    radioLabel.textContent = option;
+
+                    radioDiv.appendChild(radio);
+                    radioDiv.appendChild(radioLabel);
+                    formItemDiv.appendChild(radioDiv);
+                });
+            }
+
+            formPreview.appendChild(formItemDiv);
+        };
+
+        generateJsonBtn.addEventListener('click', () => {
+            const schema = JSON.stringify({ form: formItems }, null, 2);
+            formSchemaTextarea.value = schema;
+        });
+    </script>
+</body>
+</html>
