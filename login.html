@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/login.css">
+    <title>login</title>
+</head>
+<body>
+    <div class="main">
+        <input type="checkbox" id="chk" aria-hidden="true">
+        <div class="signup">
+            <form action="php/signup.php"   method="POST">
+                <label for="chk" aria-hidden="true">Sign up</label>
+                <input id="email" type="email" name="email" placeholder="Email" >
+                <input id="username" type="text" name="username" placeholder="Username" >
+                <input id="password" type="password" name="password" placeholder="Password" >
+                <button type="submit" name="submit">Sign up</button>
+            </form>
+        </div>
+    
+        <div class="login">
+            <form action="php/login.php" onsubmit = "return validation()"  method="POST" name="f1">
+                <label for="chk" aria-hidden="true">Login</label>
+                <input id="username" type="text" name="user" placeholder="username" >
+                <input id="password" type="password" name="pass" placeholder="Password" >
+                <button type="submit" >Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="js/login.js"></script>
+</html>
